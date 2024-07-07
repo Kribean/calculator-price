@@ -20,7 +20,7 @@ const PriceCalculator = () => {
 
   const calculatePrice = () => {
     // Calculer les valeurs intermédiaires
-    const MS = MSP1 + MSP2+S*12;
+    const MS = MSP1 + MSP2 + S * 12;
     const nbr_jour_salarie = NSP1 * JT * P_alea_vie * P_arret;
     const nbr_jour_total = JT * P * P_alea_vie + nbr_jour_salarie;
     const nbr_jour_total_1 = nbr_jour_total * P_produit;
@@ -37,6 +37,61 @@ const PriceCalculator = () => {
     // Calculer le nombre de produits réalisables par mois
     const c1_calculated = n1 / 12; // Remplacer 12 par N_MOIS si N_MOIS est une variable
     setC1(c1_calculated);
+
+    // Envoyer les données à Google Sheets
+    sendDataToSheet({
+      JT,
+      S,
+      P_alea_vie,
+      P_arret,
+      P_produit,
+      DIRECT_COST,
+      MSP1,
+      MSP2,
+      P,
+      NSP1,
+      NJ,
+      prix_par_concept_calculated,
+      c1_calculated
+    });
+  };
+
+  const sendDataToSheet = async (data) => {
+    try {
+      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=AIzaSyB4bfHEaP0lHnUGH7870MLE9hoj9uD_SNA', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          range: 'Bruno!A1',
+          valueInputOption: 'RAW',
+          insertDataOption: 'INSERT_ROWS',
+          values: [
+            [
+              data.JT,
+              data.S,
+              data.P_alea_vie,
+              data.P_arret,
+              data.P_produit,
+              data.DIRECT_COST,
+              data.MSP1,
+              data.MSP2,
+              data.P,
+              data.NSP1,
+              data.NJ,
+              data.prix_par_concept_calculated,
+              data.c1_calculated
+            ]
+          ]
+        }),
+      });
+
+      const result = await response.json();
+      console.log('Success:', result);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -44,6 +99,7 @@ const PriceCalculator = () => {
       <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
         <h1 className="text-2xl font-bold mb-6">Calculateur de Prix par Concept</h1>
         <div className="space-y-4">
+          {/* Form Inputs */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Nombre de jours travaillé dans la boîte dans un an (JT)</label>
             <input 
@@ -135,7 +191,7 @@ const PriceCalculator = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Nombre de jours nécessaire pour réaliser un produit 1 (NJ)</label>
+            <label className="block text-sm font-medium text-gray-700">Nombre de jours en fonction du produit (NJ)</label>
             <input 
               type="number" 
               value={NJ} 
@@ -143,22 +199,24 @@ const PriceCalculator = () => {
               className="mt-1 block w-full p-2 border border-gray-300 rounded"
             />
           </div>
-        </div>
-      </div>
-      <div className='flex flex-col'>
-      <button 
-            onClick={calculatePrice} 
-            className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600"
-          >
-            Calculer
-          </button>
-          {prix_par_concept !== null && c1 !== null && (
-            <div className="mt-4 p-4 bg-green-100 text-green-700 rounded">
-              <h2 className="text-lg font-bold">Prix par Concept: {prix_par_concept.toFixed(2)}&euro; </h2>
-              <h2 className="text-lg font-bold">Nombre de produits réalisables par mois (c1): {c1.toFixed(2)}</h2>
+
+          {/* Afficher les résultats */}
+          {prix_par_concept !== null && (
+            <div>
+              <h2 className="text-xl font-semibold mt-4">Résultats</h2>
+              <p>Prix par concept: {prix_par_concept.toFixed(2)}</p>
+              <p>Nombre de produits réalisables par mois: {c1.toFixed(2)}</p>
             </div>
           )}
 
+          {/* Bouton pour effectuer le calcul */}
+          <button 
+            onClick={calculatePrice} 
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Calculer et Envoyer
+          </button>
+        </div>
       </div>
     </div>
   );
