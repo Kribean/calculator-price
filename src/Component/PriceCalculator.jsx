@@ -77,19 +77,7 @@ const PriceCalculator = () => {
           insertDataOption: 'INSERT_ROWS',
           values: [
             [
-              data.JT,
-              data.S,
-              data.P_alea_vie,
-              data.P_arret,
-              data.P_produit,
-              data.DIRECT_COST,
-              data.MSP1,
-              data.MSP2,
-              data.P,
-              data.NSP1,
-              data.NJ,
-              data.prix_par_concept_calculated,
-              data.c1_calculated
+"hello","paris"
             ]
           ]
         }),
