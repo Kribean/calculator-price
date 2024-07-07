@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { GoogleOAuthProvider, GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 
 const PriceCalculator = () => {
   // Déclarer les états pour les inputs
@@ -17,6 +18,7 @@ const PriceCalculator = () => {
   // Déclarer les états pour les outputs
   const [prix_par_concept, setPrixParConcept] = useState(null);
   const [c1, setC1] = useState(null);
+  const [token, setToken] = useState(null);
 
   const calculatePrice = () => {
     // Calculer les valeurs intermédiaires
@@ -57,11 +59,17 @@ const PriceCalculator = () => {
   };
 
   const sendDataToSheet = async (data) => {
+    if (!token) {
+      console.error('No OAuth token available');
+      return;
+    }
+
     try {
-      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=AIzaSyB4bfHEaP0lHnUGH7870MLE9hoj9uD_SNA', {
+      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           range: 'Bruno!A1',
@@ -94,131 +102,146 @@ const PriceCalculator = () => {
     }
   };
 
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log('Login Success:', tokenResponse);
+      setToken(tokenResponse.access_token);
+    },
+    onError: (error) => {
+      console.error('Login Failed:', error);
+    },
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+  });
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-center justify-center w-full gap-4">
-      <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
-        <h1 className="text-2xl font-bold mb-6">Calculateur de Prix par Concept</h1>
-        <div className="space-y-4">
-          {/* Form Inputs */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nombre de jours travaillé dans la boîte dans un an (JT)</label>
-            <input 
-              type="number" 
-              value={JT} 
-              onChange={(e) => setJT(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Salaire mensuel d’un dirigeant (S)</label>
-            <input 
-              type="number" 
-              value={S} 
-              onChange={(e) => setS(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Pourcentage représentant le nombre de jours travaillés en tenant en compte les aléas de la vie (P_alea_vie)</label>
-            <input 
-              type="number" 
-              value={P_alea_vie} 
-              onChange={(e) => setP_alea_vie(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Pourcentage représentant les arrêts maladies liés aux salariés (P_arret)</label>
-            <input 
-              type="number" 
-              value={P_arret} 
-              onChange={(e) => setP_arret(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Pourcentage passé sur un produit 1 développé par la boîte (P_produit)</label>
-            <input 
-              type="number" 
-              value={P_produit} 
-              onChange={(e) => setP_produit(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Coût direct par mois (DIRECT_COST)</label>
-            <input 
-              type="number" 
-              value={DIRECT_COST} 
-              onChange={(e) => setDIRECT_COST(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Somme des salaires brut annuels des salariés à l’exception du dirigeant ayant travaillé sur le produit 1 (MSP1)</label>
-            <input 
-              type="number" 
-              value={MSP1} 
-              onChange={(e) => setMSP1(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Somme des salaires brut annuels des salariés à l’exception du dirigeant ne travaillant pas sur le produit 1 (MSP2)</label>
-            <input 
-              type="number" 
-              value={MSP2} 
-              onChange={(e) => setMSP2(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Pourcentage passé sur des activités où le dirigeant réalise les produits de sa boîte (P)</label>
-            <input 
-              type="number" 
-              value={P} 
-              onChange={(e) => setP(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nombre de salariés à l’exception du dirigeant ayant travaillé sur le produit 1 (NSP1)</label>
-            <input 
-              type="number" 
-              value={NSP1} 
-              onChange={(e) => setNSP1(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nombre de jours en fonction du produit (NJ)</label>
-            <input 
-              type="number" 
-              value={NJ} 
-              onChange={(e) => setNJ(Number(e.target.value))} 
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            />
+
+      <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row items-center justify-center w-full gap-4">
+        <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+          <h1 className="text-2xl font-bold mb-6">Calculateur de Prix par Concept</h1>
+          <div className="space-y-4">
+            {/* Google Login */}
+            <button onClick={() => login()} className="bg-blue-500 text-white px-4 py-2 rounded">
+              Login with Google
+            </button>
+
+            {/* Form Inputs */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nombre de jours travaillé dans la boîte dans un an (JT)</label>
+              <input
+                type="number"
+                value={JT}
+                onChange={(e) => setJT(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Salaire mensuel d’un dirigeant (S)</label>
+              <input
+                type="number"
+                value={S}
+                onChange={(e) => setS(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Pourcentage représentant le nombre de jours travaillés en tenant en compte les aléas de la vie (P_alea_vie)</label>
+              <input
+                type="number"
+                value={P_alea_vie}
+                onChange={(e) => setP_alea_vie(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Pourcentage représentant les arrêts maladies liés aux salariés (P_arret)</label>
+              <input
+                type="number"
+                value={P_arret}
+                onChange={(e) => setP_arret(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Pourcentage passé sur un produit 1 développé par la boîte (P_produit)</label>
+              <input
+                type="number"
+                value={P_produit}
+                onChange={(e) => setP_produit(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Coût direct par mois (DIRECT_COST)</label>
+              <input
+                type="number"
+                value={DIRECT_COST}
+                onChange={(e) => setDIRECT_COST(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Somme des salaires brut annuels des salariés à l’exception du dirigeant ayant travaillé sur le produit 1 (MSP1)</label>
+              <input
+                type="number"
+                value={MSP1}
+                onChange={(e) => setMSP1(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Somme des salaires brut annuels des salariés à l’exception du dirigeant ne travaillant pas sur le produit 1 (MSP2)</label>
+              <input
+                type="number"
+                value={MSP2}
+                onChange={(e) => setMSP2(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Pourcentage passé sur le produit 1 (P)</label>
+              <input
+                type="number"
+                value={P}
+                onChange={(e) => setP(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nombre de salariés ayant travaillé sur le produit 1 (NSP1)</label>
+              <input
+                type="number"
+                value={NSP1}
+                onChange={(e) => setNSP1(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nombre de jours travaillé par le dirigeant (NJ)</label>
+              <input
+                type="number"
+                value={NJ}
+                onChange={(e) => setNJ(Number(e.target.value))}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
           </div>
 
-          {/* Afficher les résultats */}
+          <button
+            onClick={calculatePrice}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Calculer le prix
+          </button>
+
           {prix_par_concept !== null && (
-            <div>
-              <h2 className="text-xl font-semibold mt-4">Résultats</h2>
+            <div className="mt-4">
+              <h2 className="text-xl font-bold">Résultats</h2>
               <p>Prix par concept: {prix_par_concept.toFixed(2)}</p>
               <p>Nombre de produits réalisables par mois: {c1.toFixed(2)}</p>
             </div>
           )}
-
-          {/* Bouton pour effectuer le calcul */}
-          <button 
-            onClick={calculatePrice} 
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Calculer et Envoyer
-          </button>
         </div>
       </div>
-    </div>
   );
 };
 
