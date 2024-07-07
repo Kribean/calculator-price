@@ -72,9 +72,9 @@ const PriceCalculator = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          range: 'Bruno!A1',
-          valueInputOption: 'RAW',
-          insertDataOption: 'INSERT_ROWS',
+          //range: 'Bruno!A1',
+          //valueInputOption: 'RAW',
+          //insertDataOption: 'INSERT_ROWS',
           values: [
             [
 "hello","paris"
