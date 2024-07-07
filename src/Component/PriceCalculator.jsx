@@ -73,8 +73,8 @@ const PriceCalculator = () => {
         },
         body: JSON.stringify({
           range: 'Bruno!A1',
-          valueInputOption: 'RAW',
-          insertDataOption: 'INSERT_ROWS',
+          //valueInputOption: 'RAW',
+          //insertDataOption: 'INSERT_ROWS',
           values: [
             [
 "hello","paris"
