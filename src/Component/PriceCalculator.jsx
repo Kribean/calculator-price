@@ -65,7 +65,7 @@ const PriceCalculator = () => {
     }
 
     try {
-      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS', {
+      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,8 +73,8 @@ const PriceCalculator = () => {
         },
         body: JSON.stringify({
           range: 'Bruno!A1',
-          //valueInputOption: 'RAW',
-          //insertDataOption: 'INSERT_ROWS',
+          valueInputOption: 'RAW',
+          insertDataOption: 'INSERT_ROWS',
           values: [
             [
 "hello","paris"
