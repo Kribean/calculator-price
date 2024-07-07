@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleOAuthProvider, GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const PriceCalculator = () => {
   // Déclarer les états pour les inputs
