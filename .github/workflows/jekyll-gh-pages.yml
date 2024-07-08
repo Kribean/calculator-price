@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_API_SPREADSHEET_ID: ${{secrets.REACT_APP_API_SPREADSHEET_ID}}
-      REACT_APP_API_CLIENT_ID: {{secrets.REACT_APP_API_CLIENT_ID}}
+      REACT_APP_API_CLIENT_ID: ${{secrets.REACT_APP_API_CLIENT_ID}}
 
     steps:
       - name: Checkout
