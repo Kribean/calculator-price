@@ -65,14 +65,14 @@ const PriceCalculator = () => {
     }
 
     try {
-      const response = await fetch('https://sheets.googleapis.com/v4/spreadsheets/19Kj14DyW7WAvBvIz-c6RsPefEBmTPHZ65qlw5yhVv-E/values/Bruno!A1:append', {
+      const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_API_SPREADSHEET_ID}/values/naruto!A1:D1:append`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          "range": "Sheet1!A1:D1",
+          "range": "naruto!A1:D1",
           "majorDimension": "ROWS",
           "values": [
             ["Name", "Email", "Message"],
