@@ -65,7 +65,7 @@ const PriceCalculator = () => {
     }
 
     try {
-      const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_API_SPREADSHEET_ID}/values/naruto!A1:D1:append`, {
+      const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_API_SPREADSHEET_ID}/values/naruto!A1:D1:append?valueInputOption=RAW`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
