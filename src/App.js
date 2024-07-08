@@ -1,10 +1,10 @@
 import "./App.css";
-import PriceCalculator from "./Component/PriceCalculator";
+import HomePage from "./page/HomePage";
 
 function App() {
   return (
     <div className="w-full p-4">
-      <PriceCalculator />
+      <HomePage/>
     </div>
   );
 }
