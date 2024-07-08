@@ -177,7 +177,7 @@ const HomePage = () => {
           </div>
 
           <div className="feature-card bg-white rounded-lg p-6 h-fit shadow-md">
-            {!token?<button onClick={()=>{calculatePrice()}} className="btn btn-accent w-full">Soumettre</button>:<button onClick={() => login()} className="btn btn-primary">Se connecter</button>}
+            {token?<button onClick={()=>{calculatePrice()}} className="btn btn-accent w-full">Soumettre</button>:<button onClick={() => login()} className="btn btn-primary">Se connecter</button>}
           </div>
         </section>
 
