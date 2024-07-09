@@ -57,7 +57,7 @@ const HomePage = () => {
 
     try {
       const response = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_API_SPREADSHEET_ID}/values/naruto!A1:Z1:append?valueInputOption=RAW`,
+        `https://sheets.googleapis.com/v4/spreadsheets/${process.env.REACT_APP_API_SPREADSHEET_ID}/values/naruto!A:P:append?valueInputOption=RAW`,
         {
           method: "POST",
           headers: {
@@ -65,7 +65,7 @@ const HomePage = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            range: "naruto!A1:Z1",
+            range: "naruto!A:P",
             majorDimension: "ROWS",
             values: [
               [
