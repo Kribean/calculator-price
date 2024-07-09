@@ -208,7 +208,7 @@ const HomePage = () => {
             <input
               type="number"
               value={customerPerMonth}
-              onChange={(e) => setCustomerPerMonth(e.target.value)}
+              onChange={(e) => setCustomerPerMonth(Number(e.target.value))}
               className="input input-bordered w-full mb-4"
             />
           </div>
@@ -219,7 +219,7 @@ const HomePage = () => {
             <input
               type="number"
               value={priceForProduct}
-              onChange={(e) => setPriceForProduct(e.target.value)}
+              onChange={(e) => setPriceForProduct(Number(e.target.value))}
               className="input input-bordered w-full mb-4"
             />
           </div>
@@ -400,6 +400,11 @@ const HomePage = () => {
           </h2>
           <div className="score text-3xl lg:text-6xl font-extrabold">
             <p>{stateProcess}</p>
+          </div>
+          <div className="w-full flex flex-row justify-between p-4 items-center">
+          <img src="./images/logos/logo-white.svg" alt="logo" className="w-16 h-fit"/>
+          <a className="btn" href="https://aykin.fr" rel="noreferrer noopener" target="_blank">Site de l'agence Aykin</a>
+
           </div>
         </section>
       </div>
